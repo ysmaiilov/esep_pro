@@ -1332,6 +1332,8 @@ Future<void> _importFlow(BuildContext c) async {
         yes: tr('replace_yes'),
         danger: true);
     if (!ok) return;
+    // Тастыктоо диалогунан кийин экран жабылып калышы мүмкүн
+    if (!c.mounted) return;
     await store.replaceData(Map<String, dynamic>.from(parsed));
     toast(tr('data_restored'));
   } catch (_) {
