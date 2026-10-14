@@ -12,7 +12,20 @@
           "package_name": "kg.esep.pro"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "986031616698-9ik4r61fd4npe2bna5hjm3v2fll5g97m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kg.esep.pro",
+            "certificate_hash": "3e57e2b8f980304d2b6c190b10ab92f64a161b05"
+          }
+        },
+        {
+          "client_id": "986031616698-7iuiv3hekihr98esshp7250iee2424f5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCrW4SllMGJEcxTGs7EZLGTS-aMNt124OM"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "986031616698-7iuiv3hekihr98esshp7250iee2424f5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
