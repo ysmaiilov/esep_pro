@@ -363,6 +363,9 @@ const Map<String, Map<String, String>> kStrings = {
     'login_google': 'Google менен кирүү',
     'login_cancelled': 'Кирүү жокко чыгарылды',
     'login_error': 'Кирүүдө ката кетти, кайра аракет кылыңыз',
+    'logout': 'Чыгуу',
+    'logout_desc': 'Аккаунттан чыгуу',
+    'logout_confirm': 'Аккаунттан чыгасызбы?',
     'app_version': 'ЭСЕП · версия',
   },
   'ru': {
@@ -725,6 +728,9 @@ const Map<String, Map<String, String>> kStrings = {
     'login_google': 'Войти через Google',
     'login_cancelled': 'Вход отменён',
     'login_error': 'Ошибка входа, попробуйте ещё раз',
+    'logout': 'Выйти',
+    'logout_desc': 'Выход из аккаунта',
+    'logout_confirm': 'Выйти из аккаунта?',
     'app_version': 'ЭСЕП · версия',
   },
 };
