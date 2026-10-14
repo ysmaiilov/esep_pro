@@ -129,6 +129,10 @@ const Map<String, Map<String, String>> kStrings = {
     'low_stock_toast': 'Калдык жетишсиз',
     'no_history': 'Сатуу тарыхы бош',
     'no_history_desc': 'Жаңы сатуу кошкондо бул жерде көрүнөт',
+    'period_week': 'Жума',
+    'period_month': 'Ай',
+    'period_year': 'Жыл',
+    'period_all': 'Баары',
     'default_customer': 'Кардар',
     'no_name': 'Аты жазылган эмес',
     // sale edit / receipt

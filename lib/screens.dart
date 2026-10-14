@@ -295,16 +295,29 @@ class SalesScreen extends StatelessWidget {
   }
 }
 
-class _HistoryView extends StatelessWidget {
+class _HistoryView extends StatefulWidget {
+  const _HistoryView();
+  @override
+  State<_HistoryView> createState() => _HistoryViewState();
+}
+
+class _HistoryViewState extends State<_HistoryView> {
+  int period = 3; // баары
+
   @override
   Widget build(BuildContext c) {
-    final list = [...store.sales]..sort((a, b) => s_(b['date']).compareTo(s_(a['date'])));
-    return AppCard(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: list.isEmpty
-          ? EmptyBlock(tr('no_history'), tr('no_history_desc'), icon: Icons.receipt_long_rounded)
-          : Column(children: divided(c, list.map((s) => SaleRow(s)))),
-    );
+    final list = store.sales.where((s) => inPeriod(s_(s['date']), period)).toList()
+      ..sort((a, b) => s_(b['date']).compareTo(s_(a['date'])));
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      PillTabs(labels: [for (final k in kPeriodKeys) tr(k)], index: period, onChanged: (i) => setState(() => period = i)),
+      const SizedBox(height: 12),
+      AppCard(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: list.isEmpty
+            ? EmptyBlock(tr('no_history'), tr('no_history_desc'), icon: Icons.receipt_long_rounded)
+            : Column(children: divided(c, list.map((s) => SaleRow(s)))),
+      ),
+    ]);
   }
 }
 
@@ -750,7 +763,7 @@ class KassaScreen extends StatefulWidget {
 }
 
 class _KassaScreenState extends State<KassaScreen> {
-  int sub = 0, rep = 0;
+  int sub = 0, rep = 0, per = 3;
   final expanded = <String>{};
 
   @override
@@ -889,7 +902,7 @@ class _KassaScreenState extends State<KassaScreen> {
   }
 
   Widget _report(BuildContext c) {
-    final valid = store.sales.where((s) => s['status'] != 'returned').toList();
+    final valid = store.sales.where((s) => s['status'] != 'returned' && inPeriod(s_(s['date']), per)).toList();
     final sold = <String, int>{};
     for (final s in valid) {
       for (final i in its(s)) {
@@ -897,7 +910,7 @@ class _KassaScreenState extends State<KassaScreen> {
       }
     }
     final invalid = <String, int>{};
-    for (final r in store.returns.where((r) => r['condition'] == 'invalid')) {
+    for (final r in store.returns.where((r) => r['condition'] == 'invalid' && inPeriod(s_(r['date']), per))) {
       for (final i in its(r)) {
         invalid[s_(i['productId'])] = (invalid[s_(i['productId'])] ?? 0) + ni(i['qty']);
       }
@@ -926,6 +939,8 @@ class _KassaScreenState extends State<KassaScreen> {
     final names = byClient.keys.toList()..sort((a, b) => tot(byClient[b]!).compareTo(tot(byClient[a]!)));
 
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      PillTabs(labels: [for (final k in kPeriodKeys) tr(k)], index: per, onChanged: (i) => setState(() => per = i)),
+      const SizedBox(height: 12),
       Row(children: [
         Expanded(child: StatTile(label: tr('units_sold'), value: '$units ${tr('pcs')}')),
         const SizedBox(width: 12),
