@@ -520,20 +520,17 @@ class TotalCard extends StatelessWidget {
         border: Colors.transparent,
         child: Column(children: [
           ...extra,
-          Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            Expanded(
-              child: Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
-            ),
-            const SizedBox(width: 8),
-            // Сумма узун болсо да кутуга батсын: кичирейтип, сызыкка батырат
-            Flexible(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerRight,
-                child: Text(value, maxLines: 1, style: mono(size: 22, color: c.cs.primary, w: FontWeight.w800)),
-              ),
-            ),
-          ]),
+          // Сумма узун болсо, шрифт кичирейбейт: сумма кийинки катарга өтөт
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 12,
+            runSpacing: 6,
+            children: [
+              Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+              Text(value, textAlign: TextAlign.end, style: mono(size: 22, color: c.cs.primary, w: FontWeight.w800)),
+            ],
+          ),
         ]),
       );
 }
