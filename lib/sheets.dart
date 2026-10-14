@@ -233,13 +233,13 @@ void openStockInSheet(BuildContext c) {
                 Padding(
                     padding: const EdgeInsets.only(bottom: 12),
                     child: DropdownButtonFormField<String>(
-                      value: '',
+                      value: names.contains(supplier) ? supplier : '',
                       decoration: InputDecoration(labelText: tr('supplier_opt')),
                       items: [
                         DropdownMenuItem(value: '', child: Text(tr('no_supplier'))),
                         ...names.map((x) => DropdownMenuItem(value: x, child: Text(x))),
                       ],
-                      onChanged: (v) => supplier = v ?? '',
+                      onChanged: (v) => setS(() => supplier = v ?? ''),
                     ))
               else
                 AppField(label: tr('supplier_opt'), controller: supText, hint: tr('supplier_name_ph')),
