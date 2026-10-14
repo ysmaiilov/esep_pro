@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 import 'package:share_plus/share_plus.dart';
+import 'auth.dart';
 import 'lang.dart';
 import 'pdf_gen.dart';
 import 'store.dart';
@@ -1129,6 +1130,33 @@ void openSupplierSheet(BuildContext c, [M? ex]) {
 // =====================================================================
 //  MENU, SETTINGS, SUPPORT, SUBSCRIBE, EXPORT, IMPORT, RESET
 // =====================================================================
+/// Колдонуучунун профили: Google сүрөтү, аты жана email.
+Widget _profileCard(BuildContext ctx) {
+  final u = currentUser;
+  if (u == null) return const SizedBox.shrink();
+  final photo = u.photoURL;
+  return AppCard(
+    child: Row(children: [
+      CircleAvatar(
+          radius: 26,
+          backgroundImage: photo != null ? NetworkImage(photo) : null,
+          child: photo == null ? const Icon(Icons.person_rounded) : null),
+      const SizedBox(width: 12),
+      Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(u.displayName ?? '', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+        Text(u.email ?? '', style: TextStyle(color: ctx.muted, fontSize: 12.5)),
+      ])),
+    ]),
+  );
+}
+
+Future<void> _confirmLogout(BuildContext c) async {
+  final ok = await confirmDialog(c, tr('logout_confirm'), yes: tr('logout'), danger: false);
+  if (!ok) return;
+  await signOut();
+}
+
 void openMenuSheet(BuildContext c) {
   Widget item(BuildContext ctx, IconData ic, String t, String d, VoidCallback f) => ListTile(
         leading: IconBox(ic, size: 40),
@@ -1143,6 +1171,8 @@ void openMenuSheet(BuildContext c) {
   openSheet(
       c,
       (ctx) => SheetBody(title: tr('menu'), icon: Icons.menu_rounded, children: [
+            _profileCard(ctx),
+            const SizedBox(height: 12),
             AppCard(
               padding: EdgeInsets.zero,
               child: Column(
@@ -1153,6 +1183,7 @@ void openMenuSheet(BuildContext c) {
                 item(ctx, Icons.download_rounded, tr('export'), tr('export_desc'), () => openExportSheet(c)),
                 item(ctx, Icons.upload_rounded, tr('import'), tr('import_desc'), () => _importFlow(c)),
                 item(ctx, Icons.warning_amber_rounded, tr('reset'), tr('reset_desc'), () => openResetSheet(c)),
+                item(ctx, Icons.logout_rounded, tr('logout'), tr('logout_desc'), () => _confirmLogout(c)),
               ])),
             ),
             const SizedBox(height: 14),
