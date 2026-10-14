@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'cloud.dart';
 import 'lang.dart';
 
 typedef M = Map<String, dynamic>;
@@ -129,25 +132,74 @@ class Store extends ChangeNotifier {
   }
 
   // ---------------- persistence ----------------
-  Future<void> load() async {
-    final p = await SharedPreferences.getInstance();
-    final raw = p.getString('esep-data');
+  String? _uid;
+  Timer? _cloudTimer;
+  String _localKey(String uid) => 'esep-data-$uid';
+
+  Map<String, dynamic>? _parse(String? raw) {
+    if (raw == null || raw.isEmpty) return null;
     try {
-      d = raw != null ? Map<String, dynamic>.from(jsonDecode(raw) as Map) : {};
+      return Map<String, dynamic>.from(jsonDecode(raw) as Map);
     } catch (_) {
-      d = {};
+      return null;
     }
+  }
+
+  /// Колдонмо ишке киргенде маалыматты жүктөйт.
+  Future<void> load() async {
+    final user = await FirebaseAuth.instance.authStateChanges().first;
+    await switchUser(user?.uid, force: true);
+  }
+
+  /// Колдонуучу кирген же чыккан учурда маалыматты ошого алмаштырат.
+  Future<void> switchUser(String? uid, {bool force = false}) async {
+    if (!force && uid == _uid) return;
+    _uid = uid;
+    _cloudTimer?.cancel();
+    d = {};
+    normalize();
+    if (uid == null) {
+      loaded = true;
+      notifyListeners();
+      return;
+    }
+    final p = await SharedPreferences.getInstance();
+    if (_uid != uid) return;
+    // Аккаунтсыз эски сактоо бар болсо, биринчи кирген адамга көчөт
+    final legacy = p.getString('esep-data');
+    final local = _parse(p.getString(_localKey(uid))) ?? _parse(legacy);
+    Map<String, dynamic>? cloud;
+    try {
+      cloud = _parse(await cloudLoad(uid).timeout(const Duration(seconds: 12)));
+    } catch (_) {
+      // интернет жок же ката: локалдык маалымат колдонулат
+    }
+    if (_uid != uid) return;
+    final chosen = (cloud != null && local != null)
+        ? (s_(cloud['updatedAt']).compareTo(s_(local['updatedAt'])) >= 0 ? cloud : local)
+        : (cloud ?? local);
+    d = chosen ?? {};
     normalize();
     loaded = true;
     await save();
+    if (legacy != null) await p.remove('esep-data');
   }
 
   Future<void> save() async {
     d['updatedAt'] = nowISO();
-    try {
-      final p = await SharedPreferences.getInstance();
-      await p.setString('esep-data', jsonEncode(d));
-    } catch (_) {}
+    final json = jsonEncode(d);
+    final uid = _uid;
+    if (uid != null) {
+      try {
+        final p = await SharedPreferences.getInstance();
+        await p.setString(_localKey(uid), json);
+      } catch (_) {}
+      // Көп өзгөртүүлөрдү бириктирүү үчүн 2 секунд күтөбүз
+      _cloudTimer?.cancel();
+      _cloudTimer = Timer(const Duration(seconds: 2), () {
+        cloudSave(uid, json).catchError((_) {});
+      });
+    }
     notifyListeners();
   }
 

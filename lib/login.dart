@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'auth.dart';
 import 'store.dart';
@@ -57,17 +60,37 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 /// Колдонуучу кирген болсо — негизги экран, болбосо кирүү экраны.
-class AuthGate extends StatelessWidget {
+/// Аккаунт алмашканда маалымат ошол адамдыкына өзгөрөт.
+class AuthGate extends StatefulWidget {
   final Widget child;
   const AuthGate({super.key, required this.child});
   @override
-  Widget build(BuildContext context) => StreamBuilder(
+  State<AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  StreamSubscription<User?>? _sub;
+
+  @override
+  void initState() {
+    super.initState();
+    _sub = authChanges().listen((user) => store.switchUser(user?.uid));
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => StreamBuilder<User?>(
         stream: authChanges(),
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting) {
             return const Scaffold(body: Center(child: CircularProgressIndicator()));
           }
-          return snap.data == null ? const LoginScreen() : child;
+          return snap.data == null ? const LoginScreen() : widget.child;
         },
       );
 }
