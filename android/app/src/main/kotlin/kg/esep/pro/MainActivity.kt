@@ -1,4 +1,4 @@
-package com.example.esep_pro
+package kg.esep.pro
 
 import io.flutter.embedding.android.FlutterActivity
 
