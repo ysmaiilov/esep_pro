@@ -15,6 +15,10 @@ dependencies:
   file_picker: ^8.1.2
   pdf: ^3.11.1
   printing: ^5.13.4
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:

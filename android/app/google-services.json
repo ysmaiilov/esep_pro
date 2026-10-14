@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "986031616698",
+    "project_id": "esep-pro",
+    "storage_bucket": "esep-pro.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:986031616698:android:203709faae0d4e980ec883",
+        "android_client_info": {
+          "package_name": "kg.esep.pro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrW4SllMGJEcxTGs7EZLGTS-aMNt124OM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
