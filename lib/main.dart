@@ -1,11 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'login.dart';
 import 'screens.dart';
 import 'sheets.dart';
 import 'store.dart';
 import 'ui.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const EsepApp());
 }
 
@@ -46,7 +49,7 @@ class _BootState extends State<Boot> {
   Widget build(BuildContext context) => AnimatedSwitcher(
         duration: const Duration(milliseconds: 700),
         switchInCurve: Curves.easeOut,
-        child: ready ? const Shell(key: ValueKey('shell')) : const Splash(key: ValueKey('splash')),
+        child: ready ? const AuthGate(key: ValueKey('shell'), child: Shell()) : const Splash(key: ValueKey('splash')),
       );
 }
 

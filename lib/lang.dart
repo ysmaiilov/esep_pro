@@ -358,6 +358,11 @@ const Map<String, Map<String, String>> kStrings = {
     'reset_yes': 'Ооба, баарын тазалоо',
     'cancel_stop': 'Жок, токтотуу',
     'data_cleared': 'Бардык дайын тазаланды',
+    'login_title': 'ЭСЕП',
+    'login_desc': 'Дүкөнүңүздүн эсебин жүргүзүү үчүн Google аккаунтуңуз менен кириңиз. Маалыматыңыз интернет жок болсо да телефонуңузда сакталат.',
+    'login_google': 'Google менен кирүү',
+    'login_cancelled': 'Кирүү жокко чыгарылды',
+    'login_error': 'Кирүүдө ката кетти, кайра аракет кылыңыз',
     'app_version': 'ЭСЕП · версия',
   },
   'ru': {
@@ -715,6 +720,11 @@ const Map<String, Map<String, String>> kStrings = {
     'reset_yes': 'Да, очистить всё',
     'cancel_stop': 'Нет, отмена',
     'data_cleared': 'Все данные очищены',
+    'login_title': 'ЭСЕП',
+    'login_desc': 'Войдите с Google-аккаунтом, чтобы вести учёт магазина. Данные сохраняются на телефоне, даже если нет интернета.',
+    'login_google': 'Войти через Google',
+    'login_cancelled': 'Вход отменён',
+    'login_error': 'Ошибка входа, попробуйте ещё раз',
     'app_version': 'ЭСЕП · версия',
   },
 };
