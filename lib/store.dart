@@ -38,6 +38,17 @@ String fmt(num v) {
 List<M> its(M s) => s['items'] as List<M>;
 List<M> bdOf(M p) => p['breakdown'] as List<M>;
 
+// Мезгил фильтри: 0 = жума (7 күн), 1 = ай (30 күн), 2 = жыл (365 күн), 3 = баары
+const kPeriodKeys = ['period_week', 'period_month', 'period_year', 'period_all'];
+const kPeriodDays = [7, 30, 365];
+
+bool inPeriod(String iso, int period) {
+  if (period >= kPeriodDays.length) return true;
+  final d = parseD(iso);
+  if (d == null) return false;
+  return !d.isBefore(DateTime.now().subtract(Duration(days: kPeriodDays[period])));
+}
+
 String tr(String k, [Map<String, String>? args]) {
   final ky = kStrings['ky']!;
   var v = (kStrings[store.lang] ?? ky)[k] ?? ky[k] ?? k;
