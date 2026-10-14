@@ -1,13 +1,14 @@
+import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'store.dart';
 
-/// Noto Sans is downloaded once (needs internet the first time) and cached.
-/// It contains Cyrillic incl. Kyrgyz letters ү, ө, ң.
+/// Noto Sans шрифттери APK ичинде (assets/fonts) — интернет талап кылынбайт.
+/// Кириллица жана кыргыз тамгалары (ү, ө, ң) бар.
 Future<pw.Document> _newDoc() async {
-  final base = await PdfGoogleFonts.notoSansRegular();
-  final bold = await PdfGoogleFonts.notoSansBold();
+  final base = pw.Font.ttf(await rootBundle.load('assets/fonts/NotoSans-Regular.ttf'));
+  final bold = pw.Font.ttf(await rootBundle.load('assets/fonts/NotoSans-Bold.ttf'));
   return pw.Document(theme: pw.ThemeData.withFont(base: base, bold: bold));
 }
 
