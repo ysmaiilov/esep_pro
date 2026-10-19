@@ -154,8 +154,14 @@ class Store extends ChangeNotifier {
   /// Колдонуучу кирген же чыккан учурда маалыматты ошого алмаштырат.
   Future<void> switchUser(String? uid, {bool force = false}) async {
     if (!force && uid == _uid) return;
-    _uid = uid;
+    loaded = false;
+    final prevUid = _uid;
+    if (prevUid != null && prevUid != uid && (_cloudTimer?.isActive ?? false)) {
+      // Күтүп турган акыркы өзгөртүүнү жоготпос үчүн дароо булутка жөнөтөбүз
+      cloudSave(prevUid, jsonEncode(d)).catchError((_) {});
+    }
     _cloudTimer?.cancel();
+    _uid = uid;
     d = {};
     normalize();
     if (uid == null) {

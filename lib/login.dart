@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'auth.dart';
 import 'store.dart';
@@ -17,12 +18,16 @@ class _LoginScreenState extends State<LoginScreen> {
   bool busy = false;
 
   Future<void> _login() async {
+    if (busy) return;
     setState(() => busy = true);
     try {
       final user = await signInWithGoogle();
       if (user == null) toast(tr('login_cancelled'));
-    } catch (_) {
-      toast(tr('login_error'));
+    } on AuthException catch (e) {
+      final suffix = kDebugMode ? ' [${e.code}]' : '';
+      toast((e.kind == AuthFailure.network ? tr('login_network') : tr('login_error')) + suffix);
+    } catch (e) {
+      toast(tr('login_error') + (kDebugMode ? ' [$e]' : ''));
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -70,11 +75,12 @@ class AuthGate extends StatefulWidget {
 
 class _AuthGateState extends State<AuthGate> {
   StreamSubscription<User?>? _sub;
+  late final Stream<User?> _auth = authChanges().asBroadcastStream();
 
   @override
   void initState() {
     super.initState();
-    _sub = authChanges().listen((user) => store.switchUser(user?.uid));
+    _sub = _auth.listen((user) => store.switchUser(user?.uid));
   }
 
   @override
@@ -85,12 +91,22 @@ class _AuthGateState extends State<AuthGate> {
 
   @override
   Widget build(BuildContext context) => StreamBuilder<User?>(
-        stream: authChanges(),
+        stream: _auth,
+        initialData: currentUser,
         builder: (context, snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          final user = snap.data;
+          if (user == null) {
+            if (snap.connectionState == ConnectionState.waiting) {
+              return const Scaffold(body: Center(child: CircularProgressIndicator()));
+            }
+            return const LoginScreen();
           }
-          return snap.data == null ? const LoginScreen() : widget.child;
+          return ListenableBuilder(
+            listenable: store,
+            builder: (context, _) => store.loaded
+                ? widget.child
+                : const Scaffold(body: Center(child: CircularProgressIndicator())),
+          );
         },
       );
 }

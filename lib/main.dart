@@ -40,7 +40,13 @@ class _BootState extends State<Boot> {
   @override
   void initState() {
     super.initState();
-    Future.wait([store.load(), Future.delayed(const Duration(milliseconds: 2300))]).then((_) {
+    Future.wait([
+      store.load().catchError((Object e) {
+        debugPrint('store.load failed: $e');
+        store.loaded = true;
+      }),
+      Future.delayed(const Duration(milliseconds: 2300)),
+    ]).whenComplete(() {
       if (mounted) setState(() => ready = true);
     });
   }
